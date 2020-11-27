@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TimeCheck</string>
+    <string name="loading_image">로딩 이미지</string>
+</resources>
