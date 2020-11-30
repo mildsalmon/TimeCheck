@@ -1,23 +1,47 @@
 package com.kimhakjin.timecheck;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    // 스탑워치
     private TextView timeText;
     private Thread timeThread = null;
     private Boolean isRunning = true;
+    String startTime, endTime, doTime;
+
 
     int i = 0;
 
     int buttonCount = 0; // 0 - 시작, 1 - 정지
+
+    // 리스트
+    ArrayList<String> items = new ArrayList<String>();
+    ArrayAdapter<String> adapter;
+    ArrayList<Info> stopInfo = new ArrayList<Info>();
+    ListView listView;
+
+    final int NEW_INFO = 22;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +53,18 @@ public class MainActivity extends AppCompatActivity {
 
         timeText = (TextView)findViewById(R.id.timeText);
 
+//        final ArrayList<String> items = new ArrayList<String>();
+//        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, items);
+//        final ListView listView = (ListView) findViewById(R.id.timeList);
+//        listView.setAdapter(adapter);
+
+        setListView();
+
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (buttonCount == 0) {
+                    startTime = currentTime();
                     isRunning = true;
                     timeThread = new Thread(new timeThread());
                     timeThread.start();
@@ -42,6 +74,18 @@ public class MainActivity extends AppCompatActivity {
                     isRunning = false;
                     startButton.setText("시작");
                     buttonCount = buttonCount - 1;
+                    endTime = currentTime();
+                    doTime = timeText.getText().toString();
+
+                    Intent intent = new Intent(MainActivity.this, AddInfo.class);
+//                    intent.putExtra("restlist", items);
+                    intent.putExtra("start_time", startTime);
+                    intent.putExtra("end_time", endTime);
+                    intent.putExtra("do_time", doTime);
+                    startActivityForResult(intent, NEW_INFO);
+
+//                    items.add((String) timeText.getText());
+//                    adapter.notifyDataSetChanged();
 
                     i = 0;
                     timeText.setText("00:00:00:00");
@@ -50,6 +94,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        Button add = (Button)findViewById(R.id.button);
+//        add.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v) {
+//                int count;
+//                count = adapter.getCount();
+//
+//                // 아이템 추가.
+//                items.add("LIST" + Integer.toString(count + 1));
+//
+//                // listview 갱신
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
 
 //        resetButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -89,5 +148,77 @@ public class MainActivity extends AppCompatActivity {
                 handler.sendMessage(msg);
             }
         }
+    }
+
+    public void setListView(){
+        // 리스트
+        listView = (ListView)findViewById(R.id.timeList);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        listView.setAdapter(adapter);
+
+        // 삭제
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                //정보를 삭제하는지 묻는 대화상자 나타남
+                AlertDialog.Builder dlg = new AlertDialog.Builder(view.getContext());
+                dlg.setTitle("삭제확인")
+                        .setIcon(R.drawable.jo2)
+                        .setMessage("선택한 기록을 정말 삭제하시겠습니까?")
+                        .setNegativeButton("취소",null)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                //삭제 클릭시 아래꺼
+                                items.remove(position);
+                                stopInfo.remove(position);
+                                adapter.notifyDataSetChanged();
+//                                tv.setText("맛집 리스트("+restdata.size()+"개)");
+                                Snackbar.make(view,"삭제되었습니다.",2000).show();
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
+
+        //클릭시 상세정보가 나타남
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Intent intent = new Intent(MainActivity.this, StopInfo.class);
+                Info info = stopInfo.get(position);
+                intent.putExtra("infodetail", info);
+                startActivity(intent);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(requestCode == NEW_INFO)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                Info info = data.getParcelableExtra("newinfo"); //새 기록 받아옴
+                items.add(info.getDoTime());
+                stopInfo.add(info);
+                adapter.notifyDataSetChanged();
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public String currentTime(){
+        long mNow = System.currentTimeMillis();
+        Date mReDate = new Date(mNow);
+        SimpleDateFormat mFormat = new SimpleDateFormat("HH:mm:ss");
+        String formatDate = mFormat.format(mReDate);
+
+        return formatDate;
     }
 }
