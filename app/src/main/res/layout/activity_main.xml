@@ -10,21 +10,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="4">
 
         <Button
             android:id="@+id/startButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="시작"/>
 
-        <Button
-            android:id="@+id/resetButton"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="초기화"/>
+            android:background="@drawable/round_button"
+            android:text="시작"
+            android:textSize="50sp" />
+
+<!--        <Button-->
+<!--            android:id="@+id/resetButton"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:text="초기화"/>-->
 
     </LinearLayout>
 
@@ -38,17 +41,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="d"
-            android:textSize="30dp" />
+            android:textSize="30dp"
+            android:text="00:00:00:00"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8">
+        android:layout_weight="5">
 
 
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </LinearLayout>

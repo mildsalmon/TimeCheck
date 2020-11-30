@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button startButton = (Button)findViewById(R.id.startButton);
-        Button resetButton = (Button)findViewById(R.id.resetButton);
+//        Button resetButton = (Button)findViewById(R.id.resetButton);
 
         timeText = (TextView)findViewById(R.id.timeText);
 
@@ -42,19 +42,24 @@ public class MainActivity extends AppCompatActivity {
                     isRunning = false;
                     startButton.setText("시작");
                     buttonCount = buttonCount - 1;
+
+                    i = 0;
+                    timeText.setText("00:00:00:00");
+
+
                 }
             }
         });
 
-        resetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(buttonCount == 0){
-                    i = 0;
-                    timeText.setText("00:00:00:00");
-                }
-            }
-        });
+//        resetButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(buttonCount == 0){
+//                    i = 0;
+//                    timeText.setText("00:00:00:00");
+//                }
+//            }
+//        });
 
     }
 

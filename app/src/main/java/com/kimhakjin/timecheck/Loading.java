@@ -26,6 +26,6 @@ public class Loading extends Activity {
                 startActivity(intent);
                 finish();
             }
-        }, 10000);    // 여기서 delay 시간 정해야함
+        }, 500);    // 여기서 delay 시간 정해야함
     }
 }
