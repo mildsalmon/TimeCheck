@@ -1,11 +1,16 @@
 package com.kimhakjin.timecheck;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,11 +43,19 @@ public class MainActivity extends AppCompatActivity {
 
     // 리스트
     ArrayList<String> items = new ArrayList<String>();
-    ArrayAdapter<String> adapter;
+    ArrayList<String> items_info = new ArrayList<String>();
+    ArrayAdapter<String> adapter, adapter2;
     ArrayList<Info> stopInfo = new ArrayList<Info>();
-    ListView listView;
+    ListView listView, infoView;
 
     final int NEW_INFO = 22;
+
+    // notification
+    NotificationManager manager;
+    NotificationCompat.Builder builder;
+
+    private static String CHANNEL_ID = "channel1";
+    private static String CHANEL_NAME = "Channel1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
                     timeThread.start();
                     startButton.setText("정지");
                     buttonCount = buttonCount + 1;
+
+                    showNoti();
                 }else{
                     isRunning = false;
                     startButton.setText("시작");
@@ -126,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg){
             int mSec = msg.arg1 % 100;
             int sec = (msg.arg1 / 100) % 60;
-            int min = (msg.arg1 / 100) / 60;
-            int hour = (msg.arg1 / 100) / 360;
+            int min = ((msg.arg1 / 100) / 60) % 3600;
+            int hour = ((msg.arg1 / 100) / 60) / 3600;
 
             String result = String.format("%02d:%02d:%02d:%02d", hour, min, sec, mSec);
 
@@ -155,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.timeList);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
         listView.setAdapter(adapter);
+
+//        infoView = (ListView)findViewById(R.id.infoMemo);
+//        adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items_info);
+//        infoView.setAdapter(adapter2);
 
         // 삭제
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -220,5 +240,58 @@ public class MainActivity extends AppCompatActivity {
         String formatDate = mFormat.format(mReDate);
 
         return formatDate;
+
+//        Calendar _now = Calendar.getInstance();
+//        int Hour = _now.get(Calendar.HOUR_OF_DAY);
+//        int minute = _now.get(Calendar.MINUTE);
+//        int second = _now.get(Calendar.SECOND);
+//
+//        String S_Hour = Integer.toString(Hour);
+//        String S_minute = Integer.toString(minute);
+//        String S_second = Integer.toString(second);
+//        String now = S_Hour + ":" + S_minute + ":" + S_second;
+
+//        return now;
+    }
+
+    // Notification
+    public void showNoti(){
+        builder = null;
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        name = "";
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            manager.createNotificationChannel(
+                    new NotificationChannel(CHANNEL_ID, CHANEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+            );
+
+            builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        }else{
+            builder = new NotificationCompat.Builder(this);
+        }
+//        Intent intent = new Intent(getBaseContext(), InfoNoti.class);
+////        Intent intent = getIntent();
+//        intent.setAction(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this,
+//                101,
+//                intent,
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent intent = new Intent(this, InfoNoti.class);
+//        intent.putExtra("name", name);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 101,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentTitle("알림");
+        builder.setContentText("메");
+        builder.setSmallIcon(R.drawable.jo3);
+        builder.setAutoCancel(true);
+        builder.setContentIntent(pendingIntent);
+
+        Notification notification = builder.build();
+
+        manager.notify(1, notification);
     }
 }
