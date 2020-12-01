@@ -256,6 +256,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Notification
     public void showNoti(){
+
+//        Intent intent = new Intent(this, NotiService.class);
+//
+//        startService(intent);
+
         builder = null;
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 //        name = "";
@@ -303,9 +308,14 @@ public class MainActivity extends AppCompatActivity {
         builder.setSmallIcon(R.drawable.jo3);
         builder.setAutoCancel(true);
         builder.setContentIntent(pendingIntent);
+//        builder.addAction(NotiService.makeButtonInNotification("Pause"));
 
         Notification notification = builder.build();
 
         manager.notify(1, notification);
     }
+
+
+
+
 }
