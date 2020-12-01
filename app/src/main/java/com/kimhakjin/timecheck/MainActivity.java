@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg){
             int mSec = msg.arg1 % 100;
             int sec = (msg.arg1 / 100) % 60;
-            int min = ((msg.arg1 / 100) / 60) % 3600;
-            int hour = ((msg.arg1 / 100) / 60) / 3600;
+            int min = ((msg.arg1 / 100) / 60) % 60;
+            int hour = ((msg.arg1 / 100) / 60) / 60;
 
             String result = String.format("%02d:%02d:%02d:%02d", hour, min, sec, mSec);
 
@@ -279,8 +279,22 @@ public class MainActivity extends AppCompatActivity {
 //                intent,
 //                PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Intent intent = new Intent(this, InfoNoti.class);
+        Intent intent = new Intent(this, MainActivity.class);
 //        intent.putExtra("name", name);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 101,
+//                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+//        intent.setAction(Intent.ACTION_MAIN);
+//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        intent.addCategory(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setClass(this, MainActivity.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT|
+                Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 101,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
