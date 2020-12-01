@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TimeCheck">
+        <service
+            android:name=".NotiService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
             android:name=".Loading"
             android:label="Loading">
@@ -18,23 +23,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
-        </activity>
-        
+            android:label="@string/app_name" />
         <activity
             android:name=".AddInfo"
-            android:label="@string/add_info">
-        </activity>
-
+            android:label="@string/add_info" />
         <activity
             android:name=".StopInfo"
-            android:label="@string/stop_info">
-        </activity>
-<!--        <activity android:name=""-->
-
+            android:label="@string/stop_info" />
+        <activity
+            android:name=".InfoNoti"
+            android:label="@string/noti" />
     </application>
 
 </manifest>

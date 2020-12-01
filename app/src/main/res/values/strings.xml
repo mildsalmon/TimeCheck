@@ -3,4 +3,5 @@
     <string name="loading_image">로딩 이미지</string>
     <string name="stop_info">정보 상세보기</string>
     <string name="add_info">새 기록</string>
+    <string name="noti">임시</string>
 </resources>

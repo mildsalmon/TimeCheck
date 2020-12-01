@@ -34,14 +34,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="설명 :"
+                android:gravity="center|right"
+                android:text="설명 :   "
                 android:textSize="18dp"
                 android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/add_memo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:background="#ffffff"
                 android:padding="3dp" />
         </TableRow>
@@ -52,7 +54,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="시작 시간 :"
+                android:gravity="center|right"
+                android:text="시작 시간 :   "
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
@@ -60,7 +63,7 @@
                 android:id="@+id/add_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:background="#ffffff"
                 android:hint="자동 입력"
                 android:padding="3dp" />
@@ -71,7 +74,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="종료 시간 :"
+                android:gravity="center|right"
+                android:text="종료 시간 :   "
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
@@ -79,7 +83,7 @@
                 android:id="@+id/add_end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:background="#ffffff"
                 android:hint="자동 입력"
                 android:padding="3dp" />
@@ -90,7 +94,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="총 시간 :"
+                android:gravity="center|right"
+                android:text="총 시간 :   "
                 android:textSize="18dp"
                 android:textStyle="bold" />
 
@@ -98,7 +103,7 @@
                 android:id="@+id/add_do"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:background="#ffffff"
                 android:hint="자동 입력"
                 android:padding="3dp" />

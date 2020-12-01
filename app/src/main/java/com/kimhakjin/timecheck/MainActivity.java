@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         builder.setContentTitle("알림");
-        builder.setContentText("메");
+        builder.setContentText("지금 스탑워치가 동작중입니다.\n중지하시려면 터치해주세요.");
         builder.setSmallIcon(R.drawable.jo3);
         builder.setAutoCancel(true);
         builder.setContentIntent(pendingIntent);
