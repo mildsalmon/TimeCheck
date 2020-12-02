@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#F3E2E2"
+            android:gravity="center"
+            android:text="합성할 문자를 입력하세요."
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/voiceET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteX="89dp"
+        tools:layout_editor_absoluteY="289dp">
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="155dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="여성 차분한 낭독체" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="155dp"
+            android:layout_height="wrap_content"
+            android:text="남성 차분한 낭독체" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="155dp"
+            android:layout_height="wrap_content"
+            android:text="여성 밝은 대화체" />
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="155dp"
+            android:layout_height="wrap_content"
+            android:text="남성 밝은 대화체" />
+
+    </RadioGroup>
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:max="4" />
+
+    <Button
+        android:id="@+id/voiceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="읽기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</LinearLayout>
