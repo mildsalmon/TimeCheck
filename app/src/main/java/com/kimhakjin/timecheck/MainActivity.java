@@ -1,5 +1,6 @@
 package com.kimhakjin.timecheck;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
@@ -14,12 +15,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -77,7 +82,11 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                Toast.makeText(getApplicationContext(), "스탑워치 " + startButton.getText(), Toast.LENGTH_SHORT).show();
+
                 if (buttonCount == 0) {
+
+
                     startTime = currentTime();
                     isRunning = true;
                     timeThread = new Thread(new timeThread());
@@ -106,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
                     i = 0;
                     timeText.setText("00:00:00:00");
 
-
                 }
+
             }
         });
 
@@ -316,6 +325,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mymenu, menu);
+        return true;
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.alarm:
+                Toast.makeText(this, "알람", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, Alarm.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
