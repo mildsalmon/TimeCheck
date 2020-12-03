@@ -36,6 +36,7 @@
             android:layout_margin="20dp"
 
             android:background="@drawable/round_button"
+            android:onClick="alarmClicked"
             android:text="시작"
             android:textSize="50sp" />
 
@@ -108,16 +109,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView7"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="현재 시간"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp" />
-
-            <TextView
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -133,15 +124,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/nowTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="00:00:00"
-                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/alarmTimer"
