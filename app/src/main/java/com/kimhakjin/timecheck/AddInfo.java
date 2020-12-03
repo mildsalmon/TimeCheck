@@ -1,10 +1,14 @@
 package com.kimhakjin.timecheck;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +19,7 @@ import java.util.Date;
 public class AddInfo extends AppCompatActivity {
     EditText memo, add_start, add_end, add_do;
     Info info;
-    String startTime, endTime, doTime;
+    String startTime, endTime, doTime, now;
 
     final int NEW_INFO = 22;
 
@@ -51,11 +55,23 @@ public class AddInfo extends AppCompatActivity {
         startTime = intent.getStringExtra("start_time");
         endTime = intent.getStringExtra("end_time");
         doTime = intent.getStringExtra("do_time");
+        now = intent.getStringExtra("now");
+        Toast.makeText(this, now, Toast.LENGTH_SHORT).show();
 
         add_start.setText(startTime);
         add_end.setText(endTime);
         add_do.setText(doTime);
 
+        memo.setOnKeyListener(new View.OnKeyListener(){
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)){
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(memo.getWindowToken(), 0);
+                }
+                return false;
+            }
+        });
         //ArrayList<String> dt = Intent.getStringExtra("restlist");
 
     }
@@ -74,6 +90,7 @@ public class AddInfo extends AppCompatActivity {
             info.setStartTime(add_start.getText().toString());
             info.setEndTime(add_end.getText().toString());
             info.setDoTime(add_do.getText().toString());
+            info.setNow(now);
 //            info.setMemo(finddate());
             Intent intent = getIntent();
             intent.putExtra("newinfo", info);  //Parcelable한 info를 첨부
@@ -86,7 +103,8 @@ public class AddInfo extends AppCompatActivity {
         info = new Info(memo.getText().toString(),
                 add_start.getText().toString(),
                 add_end.getText().toString(),
-                add_do.getText().toString());
+                add_do.getText().toString(),
+                now);
     }
 
 
