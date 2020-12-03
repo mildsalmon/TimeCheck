@@ -9,12 +9,19 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,15 +30,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
+import com.kakao.sdk.newtoneapi.TextToSpeechClient;
+import com.kakao.sdk.newtoneapi.TextToSpeechListener;
+import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView timeText;
     private Thread timeThread = null;
     private Boolean isRunning = true;
-    String startTime, endTime, doTime;
+    String startTime, endTime, doTime, now;
 
 
     int i = 0;
@@ -54,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     ListView listView, infoView;
 
     final int NEW_INFO = 22;
+    final int VOICE = 23;
+    final int ALARM = 24;
 
     // notification
     NotificationManager manager;
@@ -62,11 +79,38 @@ public class MainActivity extends AppCompatActivity {
     private static String CHANNEL_ID = "channel1";
     private static String CHANEL_NAME = "Channel1";
 
+    // voice
+    String speechMode = TextToSpeechClient.VOICE_WOMAN_READ_CALM;
+    Double speechSpeed = 1.0;
+    private TextToSpeechClient ttsClient;
+    String [] comment = new String[]{
+            "스트레칭을 할 시간이에요 !",
+            "우와, 집중력이 대단한데요?.",
+            "가볍게 산책하고 다시해요.",
+            "30분이 지났어요."};
+
+    //alarm
+    int TIME_30 = 1800;
+//    int min = 30;
+//    int sec=180000;
+    int sec=TIME_30;
+    int buttonCount_2;
+    String S_count;
+    int count;
+
+    int min = 30;
+    String result;
+//    private TextView alarmTimer, rate;
+    private Boolean AlarmisRunning = true;
+    private Thread timeThread2 = null;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        getAppKeyHash();
         Button startButton = (Button)findViewById(R.id.startButton);
 //        Button resetButton = (Button)findViewById(R.id.resetButton);
 
@@ -77,7 +121,25 @@ public class MainActivity extends AppCompatActivity {
 //        final ListView listView = (ListView) findViewById(R.id.timeList);
 //        listView.setAdapter(adapter);
 
+//        // SDK 초기화
+//        KakaoSDK.init(new KakaoAdapter() {
+//
+//            @Override
+//            public IApplicationConfig getApplicationConfig() {
+//                return new IApplicationConfig() {
+//                    @Override
+//                    public Context getApplicationContext() {
+//                        return MyApplication.this;
+//                    }
+//                };
+//            }
+//        });
+
         setListView();
+
+        voice_init();
+
+        clickGetBt();
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(getApplicationContext(), "스탑워치 " + startButton.getText(), Toast.LENGTH_SHORT).show();
 
                 if (buttonCount == 0) {
-
+                    now = currentDate();
 
                     startTime = currentTime();
                     isRunning = true;
@@ -93,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
                     timeThread.start();
                     startButton.setText("정지");
                     buttonCount = buttonCount + 1;
+
+//                    TTS(speechMode, speechSpeed, "스탑워치를 시작합니다.");
 
                     showNoti();
                 }else{
@@ -107,7 +171,10 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("start_time", startTime);
                     intent.putExtra("end_time", endTime);
                     intent.putExtra("do_time", doTime);
+                    intent.putExtra("now", now);
                     startActivityForResult(intent, NEW_INFO);
+
+//                    TTS(speechMode, speechSpeed, "스탑워치를 중지하였습니다.");
 
 //                    items.add((String) timeText.getText());
 //                    adapter.notifyDataSetChanged();
@@ -150,11 +217,17 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler(){
         public void handleMessage(Message msg){
             int mSec = msg.arg1 % 100;
-            int sec = (msg.arg1 / 100) % 60;
+            int sec2 = (msg.arg1 / 100) % 60;
             int min = ((msg.arg1 / 100) / 60) % 60;
             int hour = ((msg.arg1 / 100) / 60) / 60;
+            int hour_v = 0;
 
-            String result = String.format("%02d:%02d:%02d:%02d", hour, min, sec, mSec);
+            if (hour_v != hour){
+                TTS(speechMode, speechSpeed, "시작한지 1시간이 지났습니다~ 조금 쉬다가 하세요.");
+                hour_v = hour;
+            }
+
+            String result = String.format("%02d:%02d:%02d:%02d", hour, min, sec2, mSec);
 
             timeText.setText(result);
         }
@@ -171,6 +244,52 @@ public class MainActivity extends AppCompatActivity {
                 Message msg = new Message();
                 msg.arg1 = i++;
                 handler.sendMessage(msg);
+            }
+        }
+    }
+
+    Handler handler2 = new Handler(){
+        public void handleMessage(Message msg){
+            int sec1 = (msg.arg1) % 60;
+            min = ((msg.arg1) / 60) % 30;
+            int hour_out = 0;
+
+//            sec = (59 - sec) % 60;
+//            min = (29 - min) % 30;
+
+            if(sec == 0){
+                sec = TIME_30;
+                count = count + 1;
+                String use_comm = comment[count%(comment.length)];
+                TTS(speechMode, speechSpeed, use_comm);
+            }
+            result = String.format("%02d:%02d:%02d", hour_out, min, sec1);
+            String S_count = Integer.toString(count);
+//
+//            if(!AlarmisRunning){
+////                alarmTimer.setText("00:30:00");
+//            }
+        }
+    };
+
+    public class timeThread2 implements Runnable {
+        public void run() {
+//            min = intent.getIntExtra("min", 0);
+//            sec = intent.getIntExtra("sec", 0);
+            while (AlarmisRunning) {
+
+                Message msg = new Message();
+                msg.arg1 = sec--;
+
+                System.out.println("main I : " + sec);
+
+                handler2.sendMessage(msg);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -235,21 +354,59 @@ public class MainActivity extends AppCompatActivity {
             {
                 Info info = data.getParcelableExtra("newinfo"); //새 기록 받아옴
                 items.add(info.getDoTime());
+//                Toast.makeText(this, info.getNow(), Toast.LENGTH_SHORT).show();
+
                 stopInfo.add(info);
                 adapter.notifyDataSetChanged();
+//                Toast.makeText(this, "S", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if(requestCode == VOICE){
+            if(resultCode == RESULT_OK){
+                speechMode = data.getStringExtra("speechMode");
+                speechSpeed = data.getDoubleExtra("speechSpeed", 0);
+//                Toast.makeText(this, "A", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "SpeechVoice : " + speechMode + "\n"
+                        + "SpeechSpeed : " + speechSpeed + "\n"
+                        + "위 내용을 저장합니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if(requestCode == ALARM){
+            if(resultCode == RESULT_OK){
+//                min = data.getIntExtra("min",0);
+//                sec = data.getIntExtra("sec", 0);
+                sec = data.getIntExtra("i", TIME_30);
+                buttonCount_2 = data.getIntExtra("buttonCount", 0);
+                count = data.getIntExtra("count", 0);
+                Toast.makeText(this, "2. " + sec + "\n" + count +  "\n" + buttonCount_2, Toast.LENGTH_SHORT).show();
+                if(buttonCount_2==1) {
+                    timeThread2 = new Thread(new timeThread2());
+                    timeThread2.start();
+                    AlarmisRunning = true;
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public String currentTime(){
+    public String currentTime() {
         long mNow = System.currentTimeMillis();
         Date mReDate = new Date(mNow);
         SimpleDateFormat mFormat = new SimpleDateFormat("HH:mm:ss");
         String formatDate = mFormat.format(mReDate);
 
         return formatDate;
+    }
 
+    public String currentDate(){
+        long mNow1 = System.currentTimeMillis();
+        Date mReDate2 = new Date(mNow1);
+        SimpleDateFormat mFormat2 = new SimpleDateFormat("yyyy년 MM월 dd일 EE요일");
+        String formatDate2 = mFormat2.format(mReDate2);
+//        Toast.makeText(this, formatDate2, Toast.LENGTH_SHORT).show();
+        return formatDate2;
+
+    }
 //        Calendar _now = Calendar.getInstance();
 //        int Hour = _now.get(Calendar.HOUR_OF_DAY);
 //        int minute = _now.get(Calendar.MINUTE);
@@ -261,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
 //        String now = S_Hour + ":" + S_minute + ":" + S_second;
 
 //        return now;
-    }
+
 
     // Notification
     public void showNoti(){
@@ -336,12 +493,107 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.alarm:
-                Toast.makeText(this, "알람", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "알람", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, Alarm.class);
-                startActivity(intent);
+                intent.putExtra("i", sec);
+                intent.putExtra("count", count);
+                intent.putExtra("buttonCount", buttonCount_2);
+                intent.putExtra("speechMode", speechMode);
+                intent.putExtra("speechSpeed", speechSpeed);
+//                Toast.makeText(this, "3. " + sec + "\n" + count +  "\n" + buttonCount_2, Toast.LENGTH_SHORT).show();
+                System.out.println(timeThread2);
+                if(timeThread2 != null) {
+                    timeThread2.interrupt();
+                    AlarmisRunning = false;
+                }
+                startActivityForResult(intent, ALARM);
+                return true;
+            case R.id.voice:
+//                Toast.makeText(this, "음성합성", Toast.LENGTH_SHORT).show();
+                Intent intent2 = new Intent(MainActivity.this, voice.class);
+//                startActivity(intent2);
+//                intent2.putExtra("min", min);
+////                intent2.putExtra("sec", sec);
+//                intent2.putExtra("i", sec);
+//                intent2.putExtra("S_count", S_count);
+//                intent2.putExtra("buttonCount", buttonCount_2);
+                startActivityForResult(intent2, VOICE);
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void getAppKeyHash() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md;
+                md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String something = new String(Base64.encode(md.digest(), 0));
+                Log.e("Hash key", something);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            Log.e("name not found", e.toString());
+        }
+    }
+
+    public void voice_init(){
+//음성인식 초기화
+        SpeechRecognizerManager.getInstance().initializeLibrary(getApplicationContext());
+//        TextToSpeechManager.getInstance().initializeLibrary(this);
+        TextToSpeechManager.getInstance().initializeLibrary(getApplicationContext());
+
+    }
+
+    public void TTS(String speechMode, Double speechSpeed, String voice){
+        ttsClient = new TextToSpeechClient.Builder()
+                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_1)     // 음성합성방식
+                .setSpeechSpeed(speechSpeed)            // 발음 속도(0.5~4.0)
+                .setSpeechVoice(speechMode)  //TTS 음색 모드 설정(여성 차분한 낭독체)
+                .setListener(ttsListener)
+                .build();
+
+//                String voice = "안녕";
+
+//                ttsClient.play(voice);
+        ttsClient.play(voice);
+
+        System.out.println("main TTS Do ");
+
+
+    }
+
+    private TextToSpeechListener ttsListener = new TextToSpeechListener() {
+        @Override
+        public void onFinished() {
+
+        }
+
+        @Override
+        public void onError(int code, String message) {
+
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        TextToSpeechManager.getInstance().finalizeLibrary();
+    }
+
+    public void clickGetBt(){
+        SharedPreferences sharedPreferences = getSharedPreferences("test", MODE_PRIVATE);
+        speechMode = sharedPreferences.getString("SpeechVoice", "");
+        String S_speechSpeed = sharedPreferences.getString("SpeechSpeed", "");
+        speechSpeed = Double.parseDouble(S_speechSpeed);
+//        Toast.makeText(this, "설정 불러오기\nSpeechVoice : " + speechMode + "\n"
+//                + "SpeechSpeed : " + speechSpeed + "\n"
+//                + "위 내용을 불러왔습니다.", Toast.LENGTH_SHORT).show();
+
+
     }
 }
