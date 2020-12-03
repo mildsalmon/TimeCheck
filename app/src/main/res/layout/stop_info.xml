@@ -28,6 +28,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="#dddbedd7">
+
         <TableRow
             android:layout_marginTop="20dp"
             android:padding="3dp">
@@ -43,47 +44,54 @@
                 android:textSize="18dp"
                 android:textStyle="bold" />
         </TableRow>
-        <TableRow android:padding="3dp">
+
+        <TableRow
+            android:padding="3dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.2"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/etmenu1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="right"
                     android:padding="3dp"
-                    android:text="시작 시간" />
+                    android:text="시작 시간 : " />
 
                 <TextView
                     android:id="@+id/etmenu2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="right"
                     android:padding="3dp"
-                    android:text="종료 시간" />
+                    android:text="종료 시간 : " />
 
                 <TextView
                     android:id="@+id/etmenu3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="right"
                     android:padding="3dp"
-                    android:text="진행한 시간" />
+                    android:text="진행한 시간 : " />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/stop_start"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:padding="3dp"
                     android:text="자동 입력" />
 
@@ -91,7 +99,7 @@
                     android:id="@+id/stop_end"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:padding="3dp"
                     android:text="자동 입력" />
 
@@ -99,7 +107,7 @@
                     android:id="@+id/stop_do"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:gravity="left"
                     android:padding="3dp"
                     android:text="자동 입력" />
             </LinearLayout>
@@ -107,8 +115,19 @@
         </TableRow>
 
         <TableRow
-            android:gravity="center"
-            android:padding="10dp"/>
+            android:background="#dddbedd7"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/stop_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_span="2"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="00:00:00" />
+        </TableRow>
     </TableLayout>
     <LinearLayout
         android:layout_width="match_parent"

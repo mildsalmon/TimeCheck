@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class StopInfo extends AppCompatActivity {
-    TextView memo, stop_start, stop_end, stop_do;
+    TextView memo, stop_start, stop_end, stop_do, stop_now;
     Button back;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -23,15 +23,17 @@ public class StopInfo extends AppCompatActivity {
         stop_start = (TextView)findViewById(R.id.stop_start);
         stop_end = (TextView)findViewById(R.id.stop_end);
         stop_do = (TextView)findViewById(R.id.stop_do);
+        stop_now = (TextView)findViewById(R.id.stop_now);
         back = (Button)findViewById(R.id.btnback) ;
 
         Intent intent = getIntent();
-        Info res = intent.getParcelableExtra("infodetail");
+        Info inf = intent.getParcelableExtra("infodetail");
 
-        memo.setText(res.getMemo());
-        stop_start.setText(res.getStartTime());
-        stop_end.setText(res.getEndTime());
-        stop_do.setText(res.getDoTime());
+        memo.setText(inf.getMemo());
+        stop_start.setText(inf.getStartTime());
+        stop_end.setText(inf.getEndTime());
+        stop_do.setText(inf.getDoTime());
+        stop_now.setText(inf.getNow());
     }
 
     public void onClick(View v)
