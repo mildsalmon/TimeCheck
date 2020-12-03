@@ -125,7 +125,7 @@
                 android:layout_weight="1"
                 android:background="#2A8BC34A"
                 android:gravity="center"
-                android:text="0" />
+                android:text="1" />
 
         </LinearLayout>
 
@@ -134,7 +134,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="8" />
+            android:max="8"
+            android:progress="2"
+            />
     </LinearLayout>
 
     <Button
