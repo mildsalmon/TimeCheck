@@ -9,12 +9,15 @@ public class Info implements Parcelable {
     private String endTime;
     private String doTime;
     private String memo;
+    private String now;
 
-    public Info(String startTime, String endTime, String doTime, String memo){
+
+    public Info(String startTime, String endTime, String doTime, String memo, String now){
         this.startTime = startTime;
         this.endTime = endTime;
         this.doTime = doTime;
         this.memo = memo;
+        this.now = now;
     }
 
     protected Info(Parcel in) {
@@ -22,6 +25,7 @@ public class Info implements Parcelable {
         endTime = in.readString();
         doTime = in.readString();
         memo = in.readString();
+        now = in.readString();
     }
 
     @Override
@@ -30,6 +34,7 @@ public class Info implements Parcelable {
         dest.writeString(endTime);
         dest.writeString(doTime);
         dest.writeString(memo);
+        dest.writeString(now);
     }
 
     @Override
@@ -65,6 +70,8 @@ public class Info implements Parcelable {
         return memo;
     }
 
+    public String getNow(){ return now; }
+
     public void setStartTime(String startTime){
         this.startTime = startTime;
     }
@@ -79,5 +86,9 @@ public class Info implements Parcelable {
 
     public void setMemo(String memo){
         this.memo = memo;
+    }
+
+    public void setNow(String now){
+        this.now = now;
     }
 }
